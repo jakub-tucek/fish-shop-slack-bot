@@ -16,9 +16,7 @@ import scala.util.{Failure, Success}
   * @author Jakub Tucek
   */
 @Singleton
-class MessagePostService @Inject()(ws: WSClient, configProvider: ConfigProvider) {
-  implicit val ec: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
-
+class MessagePostService @Inject()(ws: WSClient, configProvider: ConfigProvider, implicit val ec: ExecutionContext) {
   def postCurrentState(state: OrderState): Unit = {
     val stateFormatted = state.map map {
       case (key, value) => s"""$key ordered ${value mkString ", "}"""
