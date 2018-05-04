@@ -1,19 +1,23 @@
 package controllers
 
-import domain.InCommand
+import domain.{ErrorOutCommand, InCommand, SuccessOutCommand}
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
-import play.api.libs.json.{JsValue, Reads}
-import play.api.mvc.{AbstractController, ControllerComponents, Request, Result}
+import play.api.mvc.{AbstractController, Action, ControllerComponents}
+import service.CommandService
 
 @Singleton
-class CommandController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
+class CommandController @Inject()(cc: ControllerComponents, commandService: CommandService) extends AbstractController(cc) {
 
 
-  def createOrder = Action(parse.formUrlEncoded) {
+  def createOrder: Action[Map[String, Seq[String]]] = Action(parse.formUrlEncoded) {
     request =>
-      println(request.body)
-      println(InCommand.createFromMap(request.body))
+      val cmd = InCommand.createFromMap(request.body)
+      Logger.debug(s"""Command accepted: $cmd""")
+      commandService.handleCommand(cmd) match {
+        case SuccessOutCommand() => Created
+        case ErrorOutCommand(msg) => NoContent
+      }
       Created
   }
 }

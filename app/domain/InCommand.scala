@@ -1,8 +1,13 @@
 package domain
 
-import play.api.data.Form
-import play.api.data.Form._
 import service.CommandHelper
+
+
+sealed trait CommandType
+
+case class OrderCommand() extends CommandType
+
+case class UnknownCommand() extends CommandType
 
 /**
   *
@@ -17,8 +22,8 @@ case class InCommand(token: String,
                      channel_name: String,
                      user_id: String,
                      user_name: String,
-                     command: String,
-                     text: String,
+                     command: CommandType,
+                     text: Seq[String],
                      response_url: String,
                      trigger_id: String)
 
@@ -35,8 +40,11 @@ object InCommand {
     CommandHelper getHead(map, "channel_name"),
     CommandHelper getHead(map, "user_id"),
     CommandHelper getHead(map, "user_name"),
-    CommandHelper getHead(map, "command"),
-    CommandHelper getHead(map, "text"),
+    CommandHelper getHead(map, "command") match {
+      case "/order" => OrderCommand()
+      case _ => UnknownCommand()
+    },
+    CommandHelper getList(map, "text"),
     CommandHelper getHead(map, "response_url"),
     CommandHelper getHead(map, "trigger_id")
   )

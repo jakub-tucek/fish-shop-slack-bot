@@ -1,7 +1,7 @@
 package service
 
 import com.google.inject.Inject
-import domain.OutMessage
+import domain.{OrderState, OutMessage}
 import javax.inject.Singleton
 import play.Logger
 import play.api.libs.json._
@@ -21,6 +21,18 @@ class MessagePostService @Inject()(ws: WSClient) {
 
   val postUrl = "https://hooks.slack.com/services/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"
 
+  def postCurrentState(state: OrderState): Unit = {
+    val stateFormatted = state.map map {
+      case (key, value) => s"""$key ordered ${value mkString ", "}"""
+    } mkString(" • ", "\n", "\n")
+
+    postMessage(OutMessage(
+      s"""
+         |*Current state of order*:
+         |$stateFormatted
+      """.stripMargin))
+  }
+
   def postMessage(outMessage: OutMessage): Unit = {
     val request: WSRequest = ws.url(postUrl)
     val complexRequest: WSRequest =
@@ -28,11 +40,12 @@ class MessagePostService @Inject()(ws: WSClient) {
 
     val data = Json.toJson(outMessage)
 
+    Logger.debug("Sending new message")
     val future: Future[WSResponse] = request.post(data)
 
     future onComplete {
-      case Success(posts) => Logger.debug("Posting message was successful")
-      case Failure(t) => Logger.error(s"Posting message failed: ${t.getMessage}")
+      case Success(posts) => Logger.debug("Sending message was successful")
+      case Failure(t) => Logger.error(s"Sending message failed: ${t.getMessage}")
     }
   }
 }
