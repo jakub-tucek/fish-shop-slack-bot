@@ -10,7 +10,7 @@ import service.CommandService
 class CommandController @Inject()(cc: ControllerComponents, commandService: CommandService) extends AbstractController(cc) {
 
 
-  def createOrder: Action[Map[String, Seq[String]]] = Action(parse.formUrlEncoded) {
+  def handleCommand: Action[Map[String, Seq[String]]] = Action(parse.formUrlEncoded) {
     request =>
       val cmd = InCommand.createFromMap(request.body)
       Logger.debug(s"""Command accepted: $cmd""")

@@ -2,13 +2,6 @@ package domain
 
 import service.CommandHelper
 
-
-sealed trait CommandType
-
-case class OrderCommand() extends CommandType
-
-case class UnknownCommand() extends CommandType
-
 /**
   *
   * @author Jakub Tucek

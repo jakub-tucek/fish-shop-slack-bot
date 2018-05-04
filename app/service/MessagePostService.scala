@@ -16,10 +16,8 @@ import scala.util.{Failure, Success}
   * @author Jakub Tucek
   */
 @Singleton
-class MessagePostService @Inject()(ws: WSClient) {
+class MessagePostService @Inject()(ws: WSClient, configProvider: ConfigProvider) {
   implicit val ec: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
-
-  val postUrl = "https://hooks.slack.com/services/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"
 
   def postCurrentState(state: OrderState): Unit = {
     val stateFormatted = state.map map {
@@ -34,7 +32,7 @@ class MessagePostService @Inject()(ws: WSClient) {
   }
 
   def postMessage(outMessage: OutMessage): Unit = {
-    val request: WSRequest = ws.url(postUrl)
+    val request: WSRequest = ws.url(configProvider.config.messageUrl)
     val complexRequest: WSRequest =
       request.addHttpHeaders("Accept" -> "application/json")
 

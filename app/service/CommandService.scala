@@ -12,15 +12,22 @@ import play.api.Logger
 @Singleton
 class CommandService @Inject()(messagePostService: MessagePostService) {
 
-  private var state: OrderState = OrderState(Map.empty[String, Set[Int]])
+  private var state: OrderState = OrderState.empty
 
   def handleCommand(command: InCommand): OutCommand = {
     command.command match {
       case OrderCommand() => handleOrderCommand(command)
+      case MenuCommand() => handleOrderMenu(command)
       case UnknownCommand() => handleUnknownCommand
     }
   }
 
+
+  private def handleOrderMenu(command: InCommand): OutCommand = {
+
+
+    SuccessOutCommand()
+  }
 
   private def handleOrderCommand(command: InCommand): OutCommand = {
     if (command.text.isEmpty) ErrorOutCommand("No parameters given")
@@ -31,12 +38,12 @@ class CommandService @Inject()(messagePostService: MessagePostService) {
         val msg = "Invalid range of arguments [0-5]"
         Logger.error(msg)
         ErrorOutCommand(msg)
+      } else {
+        state = OrderState(state.map + (command.user_name -> argsNumbers))
+
+        messagePostService.postCurrentState(state)
+        SuccessOutCommand()
       }
-
-      state = OrderState(state.map + (command.user_name -> argsNumbers))
-
-      messagePostService.postCurrentState(state)
-      SuccessOutCommand()
     } catch {
       case e: NumberFormatException =>
         val msg = "Arguments are not numbers"
