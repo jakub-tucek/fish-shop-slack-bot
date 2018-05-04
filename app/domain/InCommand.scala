@@ -35,6 +35,7 @@ object InCommand {
     CommandHelper getHead(map, "user_name"),
     CommandHelper getHead(map, "command") match {
       case "/order" => OrderCommand()
+      case "/menu" => MenuCommand()
       case _ => UnknownCommand()
     },
     CommandHelper getList(map, "text"),

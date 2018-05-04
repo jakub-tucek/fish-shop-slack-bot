@@ -10,7 +10,8 @@ import play.api.Logger
   * @author Jakub Tucek
   */
 @Singleton
-class CommandService @Inject()(messagePostService: MessagePostService) {
+class CommandService @Inject()(messagePostService: MessagePostService, fishShopClient: FishShopClient) {
+  //  implicit val ec: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
   private var state: OrderState = OrderState.empty
 
@@ -24,7 +25,7 @@ class CommandService @Inject()(messagePostService: MessagePostService) {
 
 
   private def handleOrderMenu(command: InCommand): OutCommand = {
-
+    fishShopClient.fetchMenu()
 
     SuccessOutCommand()
   }
