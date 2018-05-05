@@ -47,7 +47,7 @@ object InCommand {
       case InCommand.fishCompleteCmd => CompleteOrderCommand()
       case _ => UnknownCommand()
     },
-    CommandHelper getList(map, "text"),
+    CommandHelper.getHead(map, "text").split(" "),
     CommandHelper getHead(map, "response_url"),
     CommandHelper getHead(map, "trigger_id")
   )
