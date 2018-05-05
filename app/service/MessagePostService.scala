@@ -18,9 +18,12 @@ import scala.util.{Failure, Success}
 @Singleton
 class MessagePostService @Inject()(ws: WSClient, configProvider: ConfigProvider, implicit val ec: ExecutionContext) {
   def postCurrentState(state: OrderState): Unit = {
-    val stateFormatted = state.map map {
-      case (key, value) => s"""$key ordered ${value mkString ", "}"""
-    } mkString(" • ", "\n", "\n")
+
+    val stateFormatted = if (state.map.nonEmpty) {
+      state.map.map {
+        case (key, value) => s"""$key ordered ${value mkString ", "}"""
+      } mkString(" • ", "\n", "\n")
+    } else "No orders present"
 
     postMessage(OutMessage(
       s"""
