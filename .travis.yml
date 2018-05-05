@@ -1,10 +1,14 @@
 language: scala
-
 scala:
-  - 2.12.6
-
+- 2.12.6
 script:
-  - sbt clean test
-
+- sbt clean test dist
 after_success:
-  - bash <(curl -s https://codecov.io/bash)
+- bash <(curl -s https://codecov.io/bash)
+deploy:
+  provider: releases
+  api_key:
+    secure: eofkbjONzBLoHYY5CIRX5xou84e11uOYUAJ1HFEx7yYeIsqTGAf9LJcnubXQUlMJq4VWCSGE72UWyHJ9jZLw90KSMRr84TqvPy2z6ySKkwmnrfG8lJBQmh4c3aYY6sPzE6QsrgCRStTyGLYhe4p7RXh7kt3NCL4EZfqYyjBHeD7bJh1pbtlTmIFJ5UPwnUgM7oTICdzK7AAxHFZL//HVJZicwUe4kcuMCB1M5ao3gwue6WwNACdfZdiefR1UfUiv1nsx+WeieLyAcpbodE6yrkdnU4UzWjYl9ZPL/Vg7PNSpXCHr850FeAgjcl23uQ7FUgM15jpD0w7j8gYYCxwKc8OcjhY+wKv/BgIz8bi4qRZMI1CN9ll4m4YFWmvgerMUaqMzVpeSqkldK4ppkjEwe0nTbv0sdbeE/t8/QT7Bb3pkJY2ynxunP/P5eF88zcuB+kJrHkJBIGLRi+/pYSWdByNZZ4btEdvsqS+Fm5SP9tk4dhpaqwSgKCtN/myO37g0ZfSVylchj13x++vLsNDp5f17eqWZkh+AHAaMAsZmXEblb/mdWB2TFM3/5oqomDIcE06wmwqkntA04Uev+gEEG2s1cvCsCTP9Vh96SPHcSwKZwDlmm67zDwhgkhwn5bRSfcBh3NXbsQJ2WdnDWEENFsQw+hH4IhvivzSEUZL7+rU=
+  file: target/universal/fish-shop-slack-bot-*-SNAPSHOT.zip
+  on:
+    tags: true
