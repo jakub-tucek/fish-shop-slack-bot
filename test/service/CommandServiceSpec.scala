@@ -151,5 +151,12 @@ class CommandServiceSpec extends FlatSpec
     (messagePostService.postCurrentState _).verify(commandService.state)
   }
 
+  "Any command" should "should be denied if it has invalid token" in {
+    val cmd = InCommand.createFromMap(Map())
+
+    val res = commandService.handleCommand(cmd)
+    res shouldBe ErrorOutCommand("Unauthorized token in received command")
+  }
+
   override def afterEach(): Unit = {}
 }
