@@ -45,5 +45,5 @@ class ReservationForm(val name: String,
 }
 
 object ReservationForm {
-  def apply(name: String, phone: String, email: String): ReservationForm = new ReservationForm(name, phone, email)
+  def apply(name: String, email: String, phone: String): ReservationForm = new ReservationForm(name, email, phone)
 }

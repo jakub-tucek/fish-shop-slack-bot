@@ -1,0 +1,7 @@
+@(data: Map[String, String])
+
+@for((key, value) <- data) {------WebKitFormBoundarypLGqwPVp389t6dBu
+    Content-Disposition: form-data; name="@key"
+
+    @value
+}
