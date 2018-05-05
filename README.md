@@ -32,10 +32,14 @@ Slack bot that automates order process from restaurant rybarna.net
 sbt playGenerateSecret
 ```
 
-
 ## Usage
 
 1. **/fish-order** [0-5]* - orders meal for user who enterd command, numbers delivered by space
 2. **/fish-menu** - creates menu
 2. **/fish-reset** - reset orders of person who entered command
 2. **/fish-complete** - create order on fish shop, credentials are loaded from configuration file
+
+## More configuration
+
+Remaining configuration is set in conf/application.conf.
+There username/mail/phone number can be modified.
