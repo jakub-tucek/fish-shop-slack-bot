@@ -1,7 +1,7 @@
 package service
 
 import com.google.inject.Inject
-import domain.OutMessage
+import domain.{OrderState, OutMessage}
 import javax.inject.Singleton
 import net.ruippeixotog.scalascraper.browser.JsoupBrowser
 import net.ruippeixotog.scalascraper.dsl.DSL.Extract._
@@ -14,6 +14,11 @@ import scala.util.{Failure, Success}
 
 @Singleton
 class FishShopClient @Inject()(ws: WSClient, messagePostService: MessagePostService, configProvider: ConfigProvider, implicit val ec: ExecutionContext) {
+
+  def postOrder(state: OrderState) = {
+
+  }
+
 
   def fetchMenu(): Unit = {
     val request: WSRequest = ws.url(configProvider.config.fishShopMenuUrl)

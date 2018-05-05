@@ -11,18 +11,39 @@ import play.api.Logger
   */
 @Singleton
 class CommandService @Inject()(messagePostService: MessagePostService, fishShopClient: FishShopClient) {
-  //  implicit val ec: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
+  var state: OrderState = OrderState.empty
 
-  private var state: OrderState = OrderState.empty
 
   def handleCommand(command: InCommand): OutCommand = {
+    Logger.debug(s"Command accepted: ${command.command}")
+
     command.command match {
       case OrderCommand() => handleOrderCommand(command)
       case MenuCommand() => handleOrderMenu(command)
+      case ResetOrderCommand() => handleResetOrder(command)
+      case CompleteOrderCommand() => handleCompleteOrder(command)
       case UnknownCommand() => handleUnknownCommand
     }
   }
 
+  private def handleCompleteOrder(command: InCommand): _root_.domain.OutCommand = {
+    if (state.map.isEmpty) {
+      val msg = "No orders given."
+      Logger.error(msg)
+      ErrorOutCommand(msg)
+    }
+
+    fishShopClient.postOrder(state)
+    state = OrderState.empty
+
+    SuccessOutCommand()
+  }
+
+  private def handleResetOrder(command: InCommand): OutCommand = {
+    state = OrderState(state.map filterKeys (_ != command.user_name))
+    messagePostService.postCurrentState(state)
+    SuccessOutCommand()
+  }
 
   private def handleOrderMenu(command: InCommand): OutCommand = {
     fishShopClient.fetchMenu()
@@ -31,7 +52,7 @@ class CommandService @Inject()(messagePostService: MessagePostService, fishShopC
   }
 
   private def handleOrderCommand(command: InCommand): OutCommand = {
-    if (command.text.isEmpty) ErrorOutCommand("No parameters given")
+    if (command.text.isEmpty) return ErrorOutCommand("No parameters given")
 
     try {
       val argsNumbers = command.text.map(l => l.toInt).toSet
@@ -49,12 +70,11 @@ class CommandService @Inject()(messagePostService: MessagePostService, fishShopC
       case e: NumberFormatException =>
         val msg = "Arguments are not numbers"
         Logger.error(msg, e)
-        ErrorOutCommand(msg + "- ${e.getMessage}")
+        ErrorOutCommand(msg + s"- ${e.getMessage}")
     }
 
   }
 
-  private def handleUnknownCommand = {
-    ErrorOutCommand("Unknown out command")
-  }
+  private def handleUnknownCommand = ErrorOutCommand("Unknown command")
+
 }

@@ -2,6 +2,7 @@ package domain
 
 import service.CommandHelper
 
+
 /**
   *
   * @author Jakub Tucek
@@ -23,6 +24,12 @@ case class InCommand(token: String,
 
 object InCommand {
 
+
+  val fishOrderCmd = "/fish-order"
+  val fishMenuCmd = "/fish-menu"
+  val fishResetCmd = "/fish-reset"
+  val fishCompleteCmd = "/fish-complete"
+
   def createFromMap(map: Map[String, Seq[String]]): InCommand = InCommand(
     CommandHelper getHead(map, "token"),
     CommandHelper getHead(map, "team_id"),
@@ -34,8 +41,10 @@ object InCommand {
     CommandHelper getHead(map, "user_id"),
     CommandHelper getHead(map, "user_name"),
     CommandHelper getHead(map, "command") match {
-      case "/order" => OrderCommand()
-      case "/menu" => MenuCommand()
+      case InCommand.fishOrderCmd => OrderCommand()
+      case InCommand.fishMenuCmd => MenuCommand()
+      case InCommand.fishResetCmd => ResetOrderCommand()
+      case InCommand.fishCompleteCmd => CompleteOrderCommand()
       case _ => UnknownCommand()
     },
     CommandHelper getList(map, "text"),
