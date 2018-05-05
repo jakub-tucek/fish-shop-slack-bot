@@ -27,8 +27,14 @@ class CommandService @Inject()(messagePostService: MessagePostService, fishShopC
       case MenuCommand() => handleOrderMenu(command)
       case ResetOrderCommand() => handleResetOrder(command)
       case CompleteOrderCommand() => handleCompleteOrder(command)
+      case StatusCommand() => handleStatusCommand(command)
       case UnknownCommand() => handleUnknownCommand
     }
+  }
+
+  def handleStatusCommand(command: InCommand): OutCommand = {
+    messagePostService.postCurrentState(state)
+    SuccessOutCommand()
   }
 
   private def handleCompleteOrder(command: InCommand): _root_.domain.OutCommand = {

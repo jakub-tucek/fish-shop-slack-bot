@@ -66,7 +66,7 @@ class FishShopClient @Inject()(ws: WSClient, messagePostService: MessagePostServ
 
 
     messagePostService.postMessage(OutMessage(
-      s"""*Menu fetch result*
+      s"""*Menu fetch result:*
          |$res
       """.stripMargin
     ))

@@ -29,6 +29,7 @@ object InCommand {
   val fishMenuCmd = "/fish-menu"
   val fishResetCmd = "/fish-reset"
   val fishCompleteCmd = "/fish-complete"
+  val fishStatusCmd = "/fish-status"
 
   def createFromMap(map: Map[String, Seq[String]]): InCommand = InCommand(
     CommandHelper getHead(map, "token"),
@@ -45,12 +46,12 @@ object InCommand {
       case InCommand.fishMenuCmd => MenuCommand()
       case InCommand.fishResetCmd => ResetOrderCommand()
       case InCommand.fishCompleteCmd => CompleteOrderCommand()
+      case InCommand.fishStatusCmd => StatusCommand()
       case _ => UnknownCommand()
     },
     CommandHelper.getHead(map, "text").split(" "),
     CommandHelper getHead(map, "response_url"),
     CommandHelper getHead(map, "trigger_id")
   )
-
 
 }

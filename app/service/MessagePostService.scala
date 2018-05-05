@@ -27,7 +27,7 @@ class MessagePostService @Inject()(ws: WSClient, configProvider: ConfigProvider,
 
     postMessage(OutMessage(
       s"""
-         |*Current state of order*:
+         |*Current state of meal orders*:
          |$stateFormatted
       """.stripMargin))
   }

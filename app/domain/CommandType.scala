@@ -12,4 +12,6 @@ case class ResetOrderCommand() extends CommandType
 
 case class CompleteOrderCommand() extends CommandType
 
+case class StatusCommand() extends CommandType
+
 case class UnknownCommand() extends CommandType
