@@ -15,10 +15,9 @@ import scala.util.{Failure, Success}
 @Singleton
 class FishShopClient @Inject()(ws: WSClient, messagePostService: MessagePostService, configProvider: ConfigProvider, implicit val ec: ExecutionContext) {
 
-
   def postOrder(state: OrderState): Unit = {
     val conf = configProvider.config
-    val form = ReservationForm(conf.fishShopName, conf.fishShopEmail, conf.fishShopPhone)
+    val form = ReservationForm(conf.fishShopName, conf.fishShopEmail, conf.fishShopPhone, state)
 
     val request: WSRequest = ws.url(configProvider.config.fishShopReservationUrl)
     val complexRequest: WSRequest = createPostOrderComplexRequest(request)
@@ -39,7 +38,7 @@ class FishShopClient @Inject()(ws: WSClient, messagePostService: MessagePostServ
              | • Phone: ${conf.fishShopPhone}
              | • Email: ${conf.fishShopEmail}
              | _Enjoy your meal!_
-              """.stripMargin))
+                  """.stripMargin))
       case Failure(t) =>
         val msg = s"Creating order failed for some reason (${t.getMessage})"
         Logger.error(msg, t)

@@ -7,12 +7,7 @@ package domain
 class ReservationForm(val name: String,
                       val email: String,
                       val phone: String,
-                      val countSoup: Int = 0,
-                      val meal1: Int = 0,
-                      val meal2: Int = 0,
-                      val meal3: Int = 0,
-                      val meal4: Int = 0,
-                      val meal5: Int = 0,
+                      mealCounts: Map[Int, Int],
                       val note: String = ""
                      ) {
 
@@ -21,18 +16,18 @@ class ReservationForm(val name: String,
     "jmeno" -> name,
     "emailadresa" -> email,
     "telefon" -> phone,
-    getBoolEntry(countSoup, "polevka[]"),
-    getMealCountEntry(countSoup, "KSpolevka"),
-    getBoolEntry(meal1, "c1[]"),
-    getMealCountEntry(meal1, "c1-ks"),
-    getBoolEntry(meal2, "c2[]"),
-    getMealCountEntry(meal2, "c2-ks"),
-    getBoolEntry(meal3, "c3[]"),
-    getMealCountEntry(meal3, "c3-ks"),
-    getBoolEntry(meal4, "c4[]"),
-    getMealCountEntry(meal4, "c4-ks"),
-    getBoolEntry(meal5, "c5[]"),
-    getMealCountEntry(meal5, "c5-ks"),
+    getBoolEntry(mealCounts.getOrElse(0, 0), "polevka[]"),
+    getMealCountEntry(mealCounts.getOrElse(0, 0), "KSpolevka"),
+    getBoolEntry(mealCounts.getOrElse(1, 0), "c1[]"),
+    getMealCountEntry(mealCounts.getOrElse(1, 0), "c1-ks"),
+    getBoolEntry(mealCounts.getOrElse(2, 0), "c2[]"),
+    getMealCountEntry(mealCounts.getOrElse(2, 0), "c2-ks"),
+    getBoolEntry(mealCounts.getOrElse(3, 0), "c3[]"),
+    getMealCountEntry(mealCounts.getOrElse(3, 0), "c3-ks"),
+    getBoolEntry(mealCounts.getOrElse(4, 0), "c4[]"),
+    getMealCountEntry(mealCounts.getOrElse(4, 0), "c4-ks"),
+    getBoolEntry(mealCounts.getOrElse(5, 0), "c5[]"),
+    getMealCountEntry(mealCounts.getOrElse(5, 0), "c5-ks"),
     "poznamka" -> note
   )
 
@@ -45,5 +40,14 @@ class ReservationForm(val name: String,
 }
 
 object ReservationForm {
-  def apply(name: String, email: String, phone: String): ReservationForm = new ReservationForm(name, email, phone)
+  def apply(name: String, email: String, phone: String, state: OrderState): ReservationForm = {
+    val mealCounts: Map[Int, Int] = state.map.values.toArray.flatten.groupBy(identity).mapValues(_.length)
+
+    new ReservationForm(
+      name,
+      email,
+      phone,
+      mealCounts
+    )
+  }
 }
