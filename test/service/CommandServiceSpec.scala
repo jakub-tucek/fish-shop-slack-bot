@@ -175,5 +175,17 @@ class CommandServiceSpec extends FlatSpec
     res shouldBe ErrorOutCommand("No orders are saved")
   }
 
+  "Complete order command" should "call client and reset state" in {
+    val cmd = InCommand.createFromMap(Map(tokenEntry, "command" -> Seq(InCommand.fishCompleteCmd)))
+
+    val currState = OrderState(Map("jt" -> Set(1, 2)))
+    commandService.state = currState
+    val res = commandService.handleCommand(cmd)
+
+    (fishShopClient.postOrder _).verify(currState)
+    res shouldBe SuccessOutCommand()
+    commandService.state shouldBe OrderState.empty
+  }
+
   override def afterEach(): Unit = {}
 }

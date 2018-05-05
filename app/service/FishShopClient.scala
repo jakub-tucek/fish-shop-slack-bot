@@ -21,7 +21,8 @@ class FishShopClient @Inject()(ws: WSClient, messagePostService: MessagePostServ
 
     val request: WSRequest = ws.url(configProvider.config.fishShopReservationUrl)
 
-    request.post(form.getFormData)
+    Logger.debug(s"Posting form data ${form.getFormData}")
+    //    request.post(form.getFormData) // TODO: Implement POST
   }
 
 
