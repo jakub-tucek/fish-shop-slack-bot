@@ -10,11 +10,16 @@ import play.api.Logger
   * @author Jakub Tucek
   */
 @Singleton
-class CommandService @Inject()(messagePostService: MessagePostService, fishShopClient: FishShopClient) {
+class CommandService @Inject()(messagePostService: MessagePostService, fishShopClient: FishShopClient, configProvider: ConfigProvider) {
   var state: OrderState = OrderState.empty
 
 
   def handleCommand(command: InCommand): OutCommand = {
+    if (!command.token.equals(configProvider.config.verificationToken)) {
+      val msg = "Unauthorized token in received command"
+      Logger.error(msg)
+      return ErrorOutCommand(msg)
+    }
     Logger.debug(s"Command accepted: ${command.command}")
 
     command.command match {
