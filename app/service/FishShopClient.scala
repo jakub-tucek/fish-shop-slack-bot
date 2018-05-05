@@ -22,7 +22,24 @@ class FishShopClient @Inject()(ws: WSClient, messagePostService: MessagePostServ
     val request: WSRequest = ws.url(configProvider.config.fishShopReservationUrl)
 
     Logger.debug(s"Posting form data ${form.getFormData}")
-    //    request.post(form.getFormData) // TODO: Implement POST
+
+    request.post(form.getFormData).onComplete {
+      case Success(response) =>
+        Logger.debug("Creating order was succesful response")
+        messagePostService.postMessage(OutMessage(
+          s"""
+             |*Creating order was successful!*
+             |
+             | • Name: ${conf.fishShopName}
+             | • Phone: ${conf.fishShopPhone}
+             | • Email: ${conf.fishShopEmail}
+             | _Enjoy your meal!_
+          """.stripMargin))
+      case Failure(t) =>
+        val msg = s"Creating order failed for some reason (${t.getMessage})"
+        Logger.error(msg, t)
+        messagePostService.postMessage(OutMessage(msg))
+    }
   }
 
 
