@@ -25,7 +25,7 @@ class FishShopClient @Inject()(ws: WSClient, messagePostService: MessagePostServ
 
     request.post(form.getFormData).onComplete {
       case Success(response) =>
-        Logger.debug("Creating order was succesful response")
+        Logger.debug(s"Creating order was succesful: $response")
         messagePostService.postMessage(OutMessage(
           s"""
              |*Creating order was successful!*
