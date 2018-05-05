@@ -114,7 +114,7 @@ class CommandServiceSpec extends FlatSpec
       "command" -> Seq(InCommand.fishOrderCmd),
       tokenEntry,
       usernameEntry,
-      "text" -> Seq("1", "2"))
+      "text" -> Seq("1 2"))
     )
 
     val res = commandService.handleCommand(cmd)
@@ -128,7 +128,7 @@ class CommandServiceSpec extends FlatSpec
       "command" -> Seq(InCommand.fishOrderCmd),
       tokenEntry,
       usernameEntry,
-      "text" -> Seq("1", "2", "1", "2"))
+      "text" -> Seq("1 2"))
     )
 
     val res = commandService.handleCommand(cmd)
@@ -142,7 +142,7 @@ class CommandServiceSpec extends FlatSpec
       "command" -> Seq(InCommand.fishOrderCmd),
       tokenEntry,
       usernameEntry,
-      "text" -> Seq("1", "2"))
+      "text" -> Seq("1 2"))
     )
 
     val res = commandService.handleCommand(cmd)

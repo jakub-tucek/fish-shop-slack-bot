@@ -49,7 +49,7 @@ object InCommand {
       case InCommand.fishStatusCmd => StatusCommand()
       case _ => UnknownCommand()
     },
-    CommandHelper.getHead(map, "text").split(" "),
+    CommandHelper.getHead(map, "text").split(" ").filter(x => x.nonEmpty), // split by spaces and filter empty
     CommandHelper getHead(map, "response_url"),
     CommandHelper getHead(map, "trigger_id")
   )
