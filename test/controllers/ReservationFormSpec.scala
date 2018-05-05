@@ -14,12 +14,7 @@ class ReservationFormSpec extends FlatSpec with Matchers {
       "name",
       "mail",
       "phone",
-      1,
-      1,
-      0,
-      0,
-      0,
-      2
+      Map(0 -> 1, 5 -> 2, 1 -> 1)
     )
 
     val mappedForm = form.getFormData

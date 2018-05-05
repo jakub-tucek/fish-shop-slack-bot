@@ -73,7 +73,7 @@ class CommandServiceSpec extends FlatSpec
 
     res shouldBe SuccessOutCommand()
 
-    (fishShopClient.fetchMenu _).verify()
+    (fishShopClient.fetchMenu _: () => Unit).verify()
   }
 
   "Order command" should "fail if no params are given" in {
