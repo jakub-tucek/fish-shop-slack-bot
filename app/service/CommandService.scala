@@ -32,13 +32,14 @@ class CommandService @Inject()(messagePostService: MessagePostService, fishShopC
   }
 
   private def handleCompleteOrder(command: InCommand): _root_.domain.OutCommand = {
-    if (state.map.isEmpty) {
-      val msg = "No orders given."
+    if (state.map.isEmpty || state.map.forall { case (_, value) => value.isEmpty }) { // empty map or empty values
+      val msg = "No orders are saved"
       Logger.error(msg)
-      ErrorOutCommand(msg)
+      return ErrorOutCommand(msg)
     }
 
     fishShopClient.postOrder(state)
+
     state = OrderState.empty
 
     SuccessOutCommand()

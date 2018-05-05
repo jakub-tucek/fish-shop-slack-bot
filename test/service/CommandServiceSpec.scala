@@ -151,11 +151,28 @@ class CommandServiceSpec extends FlatSpec
     (messagePostService.postCurrentState _).verify(commandService.state)
   }
 
-  "Any command" should "should be denied if it has invalid token" in {
+  "Any command" should "be denied if it has invalid token" in {
     val cmd = InCommand.createFromMap(Map())
 
     val res = commandService.handleCommand(cmd)
     res shouldBe ErrorOutCommand("Unauthorized token in received command")
+  }
+
+  "Complete order command" should "fail if map is empty" in {
+    val cmd = InCommand.createFromMap(Map(tokenEntry, "command" -> Seq(InCommand.fishCompleteCmd)))
+
+    val res = commandService.handleCommand(cmd)
+
+    res shouldBe ErrorOutCommand("No orders are saved")
+  }
+
+  "Complete order command" should "state entries has empty values is empty" in {
+    val cmd = InCommand.createFromMap(Map(tokenEntry, "command" -> Seq(InCommand.fishCompleteCmd)))
+
+    commandService.state = OrderState(Map("jt" -> Set()))
+    val res = commandService.handleCommand(cmd)
+
+    res shouldBe ErrorOutCommand("No orders are saved")
   }
 
   override def afterEach(): Unit = {}
