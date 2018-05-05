@@ -17,7 +17,10 @@ class ConfigProvider @Inject()(configuration: Configuration) {
     configuration.get[String]("messageUrl"),
     configuration.get[String]("verificationToken"),
     configuration.get[String]("fishShopMenuUrl"),
-    configuration.get[String]("fishShopReservationUrl")
+    configuration.get[String]("fishShopReservationUrl"),
+    configuration.get[String]("fishShopEmail"),
+    configuration.get[String]("fishShopName"),
+    configuration.get[String]("fishShopPhone")
   )
 
 }
