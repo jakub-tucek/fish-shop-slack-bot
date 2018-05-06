@@ -1,5 +1,8 @@
 package domain
 
+import scala.collection.mutable
+import scala.collection.mutable.LinkedHashMap
+
 /**
   *
   * @author Jakub Tucek
@@ -12,7 +15,7 @@ class ReservationForm(val name: String,
                      ) {
 
 
-  def getFormData: Map[String, String] = Map(
+  def getFormData: mutable.LinkedHashMap[String, String] = mutable.LinkedHashMap(
     "jmeno" -> name,
     "emailadresa" -> email,
     "telefon" -> phone,
