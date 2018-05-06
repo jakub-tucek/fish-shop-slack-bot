@@ -17,7 +17,7 @@ import scala.util.{Failure, Success}
   */
 @Singleton
 class MessagePostService @Inject()(ws: WSClient, configProvider: ConfigProvider, implicit val ec: ExecutionContext) {
-  def postCurrentState(state: OrderState): Unit = {
+  def postCurrentState(state: OrderState, url: String): Unit = {
 
     val stateFormatted = if (state.map.nonEmpty) {
       state.map.map {
@@ -29,11 +29,11 @@ class MessagePostService @Inject()(ws: WSClient, configProvider: ConfigProvider,
       s"""
          |*Current state of meal orders*:
          |$stateFormatted
-      """.stripMargin))
+      """.stripMargin), url)
   }
 
-  def postMessage(outMessage: OutMessage): Unit = {
-    val request: WSRequest = ws.url(configProvider.config.messageUrl)
+  def postMessage(outMessage: OutMessage, url: String): Unit = {
+    val request: WSRequest = ws.url(url)
     val complexRequest: WSRequest =
       request.addHttpHeaders("Accept" -> "application/json")
 

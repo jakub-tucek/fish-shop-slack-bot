@@ -4,8 +4,7 @@ package domain
   *
   * @author Jakub Tucek
   */
-case class FishShopConfig(messageUrl: String,
-                          verificationToken: String,
+case class FishShopConfig(verificationToken: String,
                           fishShopMenuUrl: String,
                           fishShopReservationUrl: String,
                           fishShopEmail: String,

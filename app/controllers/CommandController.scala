@@ -15,7 +15,7 @@ class CommandController @Inject()(cc: ControllerComponents, commandService: Comm
       commandService.handleCommand(cmd) match {
         case SuccessOutCommand() => Created
         case ErrorOutCommand(msg) =>
-          messagePostService.postMessage(OutMessage(msg))
+          messagePostService.postMessage(OutMessage(msg), cmd.response_url)
           NoContent
       }
   }

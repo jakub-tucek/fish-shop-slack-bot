@@ -33,7 +33,7 @@ class CommandService @Inject()(messagePostService: MessagePostService, fishShopC
   }
 
   def handleStatusCommand(command: InCommand): OutCommand = {
-    messagePostService.postCurrentState(state)
+    messagePostService.postCurrentState(state, command.response_url)
     SuccessOutCommand()
   }
 
@@ -44,7 +44,7 @@ class CommandService @Inject()(messagePostService: MessagePostService, fishShopC
       return ErrorOutCommand(msg)
     }
 
-    fishShopClient.postOrder(state)
+    fishShopClient.postOrder(command, state)
 
     state = OrderState.empty
 
@@ -53,12 +53,12 @@ class CommandService @Inject()(messagePostService: MessagePostService, fishShopC
 
   private def handleResetOrder(command: InCommand): OutCommand = {
     state = OrderState(state.map filterKeys (_ != command.user_name))
-    messagePostService.postCurrentState(state)
+    messagePostService.postCurrentState(state, command.response_url)
     SuccessOutCommand()
   }
 
   private def handleOrderMenu(command: InCommand): OutCommand = {
-    fishShopClient.fetchMenu()
+    fishShopClient.fetchMenu(command)
 
     SuccessOutCommand()
   }
@@ -75,7 +75,7 @@ class CommandService @Inject()(messagePostService: MessagePostService, fishShopC
       } else {
         state = OrderState(state.map + (command.user_name -> argsNumbers))
 
-        messagePostService.postCurrentState(state)
+        messagePostService.postCurrentState(state, command.response_url)
         SuccessOutCommand()
       }
     } catch {

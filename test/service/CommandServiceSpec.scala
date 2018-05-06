@@ -17,6 +17,7 @@ class CommandServiceSpec extends FlatSpec
 
   private val tokenEntry = ("token", Seq("verfication token url"))
   private val usernameEntry = ("user_name", Seq("jt"))
+  private val messageUrl = ("response_url", Seq("response url"))
 
   private var fishShopClient = stub[FishShopClient]
   private var messagePostService = stub[MessagePostService]
@@ -50,7 +51,7 @@ class CommandServiceSpec extends FlatSpec
 
     val cmd = InCommand.createFromMap(Map(
       "command" -> Seq(InCommand.fishResetCmd),
-      tokenEntry,
+      tokenEntry, messageUrl,
       usernameEntry
     ))
 
@@ -66,19 +67,19 @@ class CommandServiceSpec extends FlatSpec
 
   "Menu command" should "call fish client to fetch menu" in {
     val cmd = InCommand.createFromMap(Map(
-      tokenEntry,
+      tokenEntry, messageUrl,
       "command" -> Seq(InCommand.fishMenuCmd))
     )
     val res = commandService.handleCommand(cmd)
 
     res shouldBe SuccessOutCommand()
 
-    (fishShopClient.fetchMenu _: () => Unit).verify()
+    (fishShopClient.fetchMenu _).verify(cmd)
   }
 
   "Order command" should "fail if no params are given" in {
     val cmd = InCommand.createFromMap(Map(
-      tokenEntry,
+      tokenEntry, messageUrl,
       "command" -> Seq(InCommand.fishOrderCmd),
       "text" -> Seq())
     )
@@ -89,7 +90,7 @@ class CommandServiceSpec extends FlatSpec
 
   "Order command" should "fail if params are let then 0" in {
     val cmd = InCommand.createFromMap(Map(
-      tokenEntry,
+      tokenEntry, messageUrl,
       "command" -> Seq(InCommand.fishOrderCmd),
       "text" -> Seq("-1"))
     )
@@ -100,7 +101,7 @@ class CommandServiceSpec extends FlatSpec
 
   "Order command" should "fail if params are not numbers" in {
     val cmd = InCommand.createFromMap(Map(
-      tokenEntry,
+      tokenEntry, messageUrl,
       "command" -> Seq(InCommand.fishOrderCmd),
       "text" -> Seq("ahoj"))
     )
@@ -112,7 +113,7 @@ class CommandServiceSpec extends FlatSpec
   "Order command" should "modify state correctly" in {
     val cmd = InCommand.createFromMap(Map(
       "command" -> Seq(InCommand.fishOrderCmd),
-      tokenEntry,
+      tokenEntry, messageUrl,
       usernameEntry,
       "text" -> Seq("1 2"))
     )
@@ -126,7 +127,7 @@ class CommandServiceSpec extends FlatSpec
   "Order command" should "modify state without duplicated values" in {
     val cmd = InCommand.createFromMap(Map(
       "command" -> Seq(InCommand.fishOrderCmd),
-      tokenEntry,
+      tokenEntry, messageUrl,
       usernameEntry,
       "text" -> Seq("1 2"))
     )
@@ -140,7 +141,7 @@ class CommandServiceSpec extends FlatSpec
   "Order command" should "call post service with new state" in {
     val cmd = InCommand.createFromMap(Map(
       "command" -> Seq(InCommand.fishOrderCmd),
-      tokenEntry,
+      tokenEntry, messageUrl,
       usernameEntry,
       "text" -> Seq("1 2"))
     )
@@ -148,7 +149,7 @@ class CommandServiceSpec extends FlatSpec
     val res = commandService.handleCommand(cmd)
     res shouldBe SuccessOutCommand()
 
-    (messagePostService.postCurrentState _).verify(commandService.state)
+    (messagePostService.postCurrentState _).verify(commandService.state, cmd.response_url)
   }
 
   "Any command" should "be denied if it has invalid token" in {
@@ -159,7 +160,7 @@ class CommandServiceSpec extends FlatSpec
   }
 
   "Complete order command" should "fail if map is empty" in {
-    val cmd = InCommand.createFromMap(Map(tokenEntry, "command" -> Seq(InCommand.fishCompleteCmd)))
+    val cmd = InCommand.createFromMap(Map(tokenEntry, messageUrl, "command" -> Seq(InCommand.fishCompleteCmd)))
 
     val res = commandService.handleCommand(cmd)
 
@@ -167,7 +168,7 @@ class CommandServiceSpec extends FlatSpec
   }
 
   "Complete order command" should "state entries has empty values is empty" in {
-    val cmd = InCommand.createFromMap(Map(tokenEntry, "command" -> Seq(InCommand.fishCompleteCmd)))
+    val cmd = InCommand.createFromMap(Map(tokenEntry, messageUrl, "command" -> Seq(InCommand.fishCompleteCmd)))
 
     commandService.state = OrderState(Map("jt" -> Set()))
     val res = commandService.handleCommand(cmd)
@@ -176,13 +177,13 @@ class CommandServiceSpec extends FlatSpec
   }
 
   "Complete order command" should "call client and reset state" in {
-    val cmd = InCommand.createFromMap(Map(tokenEntry, "command" -> Seq(InCommand.fishCompleteCmd)))
+    val cmd = InCommand.createFromMap(Map(tokenEntry, messageUrl, "command" -> Seq(InCommand.fishCompleteCmd)))
 
     val currState = OrderState(Map("jt" -> Set(1, 2)))
     commandService.state = currState
     val res = commandService.handleCommand(cmd)
 
-    (fishShopClient.postOrder _).verify(currState)
+    (fishShopClient.postOrder _).verify(cmd, currState)
     res shouldBe SuccessOutCommand()
     commandService.state shouldBe OrderState.empty
   }

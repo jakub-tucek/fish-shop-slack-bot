@@ -16,7 +16,6 @@ Slack bot that automates order process from restaurant rybarna.net
 
 1. Set env variables 
     ```
-    export FISH_SHOP_BOT_MESSAGE_URL="https://hooks.slack.com/services/XXXXXXX"
     export FISH_SHOP_BOT_VERIFICATION_TOKEN="XXXXXXXXXXX"
     export FISH_SHOP_APPLICATION_SECRET="XXXXXXXXXXXXX"
     ```

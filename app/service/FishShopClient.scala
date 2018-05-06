@@ -1,7 +1,7 @@
 package service
 
 import com.google.inject.Inject
-import domain.{OrderState, OutMessage, ReservationForm}
+import domain.{InCommand, OrderState, OutMessage, ReservationForm}
 import javax.inject.Singleton
 import net.ruippeixotog.scalascraper.browser.JsoupBrowser
 import net.ruippeixotog.scalascraper.dsl.DSL.Extract._
@@ -15,7 +15,7 @@ import scala.util.{Failure, Success}
 @Singleton
 class FishShopClient @Inject()(ws: WSClient, messagePostService: MessagePostService, configProvider: ConfigProvider, implicit val ec: ExecutionContext) {
 
-  def postOrder(state: OrderState): Unit = {
+  def postOrder(inCommand: InCommand, state: OrderState): Unit = {
     val conf = configProvider.config
     val form = ReservationForm(conf.fishShopName, conf.fishShopEmail, conf.fishShopPhone, state)
 
@@ -38,23 +38,23 @@ class FishShopClient @Inject()(ws: WSClient, messagePostService: MessagePostServ
              | • Phone: ${conf.fishShopPhone}
              | • Email: ${conf.fishShopEmail}
              | _Enjoy your meal!_
-                  """.stripMargin))
+                  """.stripMargin), inCommand.response_url)
       case Failure(t) =>
         val msg = s"Creating order failed for some reason (${t.getMessage})"
         Logger.error(msg, t)
-        messagePostService.postMessage(OutMessage(msg))
+        messagePostService.postMessage(OutMessage(msg), inCommand.response_url)
     }
   }
 
 
-  def fetchMenu(): Unit = {
+  def fetchMenu(inCommand: InCommand): Unit = {
     val request: WSRequest = ws.url(configProvider.config.fishShopMenuUrl)
 
     request.get.onComplete {
-      case Success(response) => handleResponse(response.body)
+      case Success(response) => handleResponse(response.body, inCommand.response_url)
       case Failure(t) =>
         val msg = "Unable to download current menu"
-        messagePostService.postMessage(OutMessage(s"Unable to download current menu ${t.getMessage}"))
+        messagePostService.postMessage(OutMessage(s"Unable to download current menu ${t.getMessage}"), inCommand.response_url)
         Logger.error(msg, t)
     }
   }
@@ -65,7 +65,7 @@ class FishShopClient @Inject()(ws: WSClient, messagePostService: MessagePostServ
     * @param response html response
     * @return parsed text
     */
-  def handleResponse(response: String): Unit = {
+  def handleResponse(response: String, responseUrl: String): Unit = {
     val browser = JsoupBrowser()
     val doc = browser.parseString(response)
 
@@ -90,7 +90,7 @@ class FishShopClient @Inject()(ws: WSClient, messagePostService: MessagePostServ
       s"""*Menu fetch result:*
          |$res
       """.stripMargin
-    ))
+    ), responseUrl)
   }
 
   private def createPostOrderComplexRequest(request: WSRequest): WSRequest = request.addHttpHeaders(
