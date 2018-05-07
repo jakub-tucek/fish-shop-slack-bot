@@ -22,7 +22,7 @@ class MessagePostService @Inject()(ws: WSClient, configProvider: ConfigProvider,
     val stateFormatted = if (state.map.nonEmpty) {
       state.map.map {
         case (key, value) => s"""$key ordered ${value mkString ", "}"""
-      } mkString(" • ", "\n • ", "\n")g
+      } mkString(" • ", "\n • ", "\n")
     } else "No orders present"
 
     postMessage(OutMessage(

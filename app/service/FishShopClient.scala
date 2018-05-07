@@ -28,11 +28,11 @@ class FishShopClient @Inject()(ws: WSClient, messagePostService: MessagePostServ
 
     complexRequest.post(body).onComplete {
       case Success(response) =>
-        Logger.debug(s"Creating order was succesful: $response")
+        Logger.debug(s"Creating order was successful: $response")
         Logger.debug(s"Body: ${response.body}")
         messagePostService.postMessage(OutMessage(
           s"""
-             |*Creating order was successful!*
+             |*Order was created successfully!*
              |
                  | • Name: ${conf.fishShopName}
              | • Phone: ${conf.fishShopPhone}

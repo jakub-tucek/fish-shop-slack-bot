@@ -46,7 +46,7 @@ class CommandServiceSpec extends FlatSpec
 
   "Reset command" should "Reset user's order" in {
     commandService.state = OrderState(Map(
-      "jt" -> Set(1, 2)
+      "jt" -> List(1, 2)
     ))
 
     val cmd = InCommand.createFromMap(Map(
@@ -121,7 +121,7 @@ class CommandServiceSpec extends FlatSpec
     val res = commandService.handleCommand(cmd)
     res shouldBe SuccessOutCommand()
 
-    commandService.state shouldBe OrderState(Map("jt" -> Set(1, 2)))
+    commandService.state shouldBe OrderState(Map("jt" -> List(1, 2)))
   }
 
   "Order command" should "modify state without duplicated values" in {
@@ -135,7 +135,7 @@ class CommandServiceSpec extends FlatSpec
     val res = commandService.handleCommand(cmd)
     res shouldBe SuccessOutCommand()
 
-    commandService.state shouldBe OrderState(Map("jt" -> Set(1, 2)))
+    commandService.state shouldBe OrderState(Map("jt" -> List(1, 2)))
   }
 
   "Order command" should "call post service with new state" in {
@@ -170,7 +170,7 @@ class CommandServiceSpec extends FlatSpec
   "Complete order command" should "state entries has empty values is empty" in {
     val cmd = InCommand.createFromMap(Map(tokenEntry, messageUrl, "command" -> Seq(InCommand.fishCompleteCmd)))
 
-    commandService.state = OrderState(Map("jt" -> Set()))
+    commandService.state = OrderState(Map("jt" -> List()))
     val res = commandService.handleCommand(cmd)
 
     res shouldBe ErrorOutCommand("No orders are saved")
@@ -179,7 +179,7 @@ class CommandServiceSpec extends FlatSpec
   "Complete order command" should "call client and reset state" in {
     val cmd = InCommand.createFromMap(Map(tokenEntry, messageUrl, "command" -> Seq(InCommand.fishCompleteCmd)))
 
-    val currState = OrderState(Map("jt" -> Set(1, 2)))
+    val currState = OrderState(Map("jt" -> List(1, 2)))
     commandService.state = currState
     val res = commandService.handleCommand(cmd)
 
