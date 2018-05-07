@@ -67,7 +67,7 @@ class CommandService @Inject()(messagePostService: MessagePostService, fishShopC
     if (command.text.isEmpty) return ErrorOutCommand("No parameters given")
 
     try {
-      val argsNumbers = command.text.map(l => l.toInt).toList
+      val argsNumbers = command.text.map(l => l.toInt).toSeq
       if (!argsNumbers.forall(l => l < 5 && l >= 0)) {
         val msg = "Invalid range of arguments [0-5]"
         Logger.error(msg)

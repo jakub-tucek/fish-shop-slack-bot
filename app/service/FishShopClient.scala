@@ -69,7 +69,7 @@ class FishShopClient @Inject()(ws: WSClient, messagePostService: MessagePostServ
     val browser = JsoupBrowser()
     val doc = browser.parseString(response)
 
-    val elems = doc >> elementList(".entry-content > p, .entry-content li")
+    val elems = doc >> elementSeq(".entry-content > p, .entry-content li")
 
     var dirtyCounter = 0
 
