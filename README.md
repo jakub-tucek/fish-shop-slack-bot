@@ -3,14 +3,15 @@
 
 [![Build Status](https://travis-ci.com/jakub-tucek/fish-shop-slack-bot.svg?branch=master)](https://travis-ci.com/jakub-tucek/fish-shop-slack-bot)
 
-Slack bot that automates order process from restaurant rybarna.net
+Slack bot that automates order process of restaurant rybarna.net
 
 ## Start up release
 
 1. Download release zip file
 2. unzip downloaded file
 3. Define environment variables (shown below)
-4. Go to unzipped directory and run **/bin/fish-shop-slack-bot** script
+4. Configure application.conf
+5. Go to unzipped directory and run **/bin/fish-shop-slack-bot**
 
 ## Start up development
 
@@ -33,7 +34,7 @@ sbt playGenerateSecret
 
 ## Usage
 
-1. **/fish-order** [0-5]* - orders meal for user who entered command, numbers are delivered by space
+1. **/fish-order** ([0-5][space])* - orders meal for user who entered command, numbers are delivered by space
 2. **/fish-menu** - creates menu
 2. **/fish-reset** - reset orders of person who entered command
 2. **/fish-complete** - create order on fish shop, user details are loaded from configuration file
