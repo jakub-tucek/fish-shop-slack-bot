@@ -68,12 +68,13 @@ class CommandService @Inject()(messagePostService: MessagePostService, fishShopC
 
     try {
       val argsNumbers = command.text.map(l => l.toInt).toSeq
-      if (!argsNumbers.forall(l => l < 5 && l >= 0)) {
+      if (!argsNumbers.forall(l => l <= 5 && l >= 0)) {
         val msg = "Invalid range of arguments [0-5]"
         Logger.error(msg)
         ErrorOutCommand(msg)
       } else {
-        state = OrderState(state.map + (command.user_name -> argsNumbers))
+        val joinedUserState = state.map.getOrElse(command.user_name, Seq.empty) ++ argsNumbers
+        state = OrderState(state.map + (command.user_name -> joinedUserState))
 
         messagePostService.postCurrentState(state, command.response_url)
         SuccessOutCommand()

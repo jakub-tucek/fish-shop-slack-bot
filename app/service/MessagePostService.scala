@@ -6,6 +6,7 @@ import javax.inject.Singleton
 import play.Logger
 import play.api.libs.json._
 import play.api.libs.ws._
+import views.html.currentStateMessage
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
@@ -17,20 +18,11 @@ import scala.util.{Failure, Success}
   */
 @Singleton
 class MessagePostService @Inject()(ws: WSClient, configProvider: ConfigProvider, implicit val ec: ExecutionContext) {
-  def postCurrentState(state: OrderState, url: String): Unit = {
 
-    val stateFormatted = if (state.map.nonEmpty) {
-      state.map.map {
-        case (key, value) => s"""$key ordered ${value mkString ", "}"""
-      } mkString(" • ", "\n • ", "\n")
-    } else "No orders present"
+  def postCurrentState(state: OrderState, url: String): Unit = postMessage(
+    OutMessage(views.html.currentStateMessage.render(state).body), url
+  )
 
-    postMessage(OutMessage(
-      s"""
-         |*Current state of meal orders*:
-         |$stateFormatted
-      """.stripMargin), url)
-  }
 
   def postMessage(outMessage: OutMessage, url: String): Unit = {
     val request: WSRequest = ws.url(url)
@@ -47,4 +39,6 @@ class MessagePostService @Inject()(ws: WSClient, configProvider: ConfigProvider,
       case Failure(t) => Logger.error(s"Sending message failed: ${t.getMessage}")
     }
   }
+
+
 }

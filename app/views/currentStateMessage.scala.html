@@ -1,0 +1,18 @@
+@import domain.OrderState
+@import service.TemplateHeper
+
+@(state: OrderState)
+
+@*********************
+Formatting and whitespaces must be preserved or message will be broken
+*********************@
+
+Current meal orders:
+@if(state.map.empty) {
+    >>> No orders found
+} else {
+>>>
+    @for((keyUsr,valOrderedItems) <- state.map) {
+        • *@{keyUsr}* ordered _@{TemplateHeper.formatOrderItems(valOrderedItems)}_
+    }
+}
