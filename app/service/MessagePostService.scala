@@ -1,12 +1,11 @@
 package service
 
 import com.google.inject.Inject
-import domain.{OrderState, OutMessage}
+import domain.{Attachment, OrderState, OutMessage}
 import javax.inject.Singleton
 import play.Logger
 import play.api.libs.json._
 import play.api.libs.ws._
-import views.html.currentStateMessage
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
@@ -19,9 +18,41 @@ import scala.util.{Failure, Success}
 @Singleton
 class MessagePostService @Inject()(ws: WSClient, configProvider: ConfigProvider, implicit val ec: ExecutionContext) {
 
-  def postCurrentState(state: OrderState, url: String): Unit = postMessage(
-    OutMessage(views.html.currentStateMessage.render(state).body), url
-  )
+  def postOrderCreated(url: String): Unit = {
+    val conf = configProvider.config
+    val status =
+      s"""• Name: ${conf.fishShopName}
+         | • Phone: ${conf.fishShopPhone}
+         | • Email: ${conf.fishShopEmail}
+       """.stripMargin
+
+    postMessage(
+      OutMessage.create(Attachment("Order was created successfully", status, "Order was created successfully")),
+      url
+    )
+  }
+
+
+  def postCurrentState(state: OrderState, url: String): Unit = {
+    val attachments = if (state.map.nonEmpty) {
+      state.map.map {
+        case (key, value) => Attachment(
+          key,
+          s"_${FishShopUtils.formatOrderItems(value)}_",
+          "Orders cannot be displayed at the moment"
+        )
+      }.toSeq
+    } else {
+      Seq(Attachment(
+        "Fish shop orders",
+        "No orders found :confused:",
+        "No fish shop orders",
+        "warning"
+      ))
+    }
+
+    postMessage(OutMessage("*Fish shop orders*", attachments), url)
+  }
 
 
   def postMessage(outMessage: OutMessage, url: String): Unit = {

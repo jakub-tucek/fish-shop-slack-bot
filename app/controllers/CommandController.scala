@@ -1,6 +1,6 @@
 package controllers
 
-import domain.{ErrorOutCommand, InCommand, OutMessage, SuccessOutCommand}
+import domain._
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.{AbstractController, Action, ControllerComponents}
 import service.{CommandService, MessagePostService}
@@ -15,7 +15,7 @@ class CommandController @Inject()(cc: ControllerComponents, commandService: Comm
       commandService.handleCommand(cmd) match {
         case SuccessOutCommand() => Created
         case ErrorOutCommand(msg) =>
-          messagePostService.postMessage(OutMessage(msg), cmd.response_url)
+          messagePostService.postMessage(OutMessage.create(Attachment("Error!", msg, s"Error!: $msg :sweat:", "danger")), cmd.response_url)
           NoContent
       }
   }

@@ -1,7 +1,7 @@
 package service
 
 import com.google.inject.Inject
-import domain.{InCommand, OrderState, OutMessage, ReservationForm}
+import domain._
 import javax.inject.Singleton
 import net.ruippeixotog.scalascraper.browser.JsoupBrowser
 import net.ruippeixotog.scalascraper.dsl.DSL.Extract._
@@ -28,34 +28,26 @@ class FishShopClient @Inject()(ws: WSClient, messagePostService: MessagePostServ
 
     complexRequest.post(body).onComplete {
       case Success(response) =>
-        Logger.debug(s"Creating order was successful: $response")
+        Logger.debug(s"Completing order was successful: $response")
         Logger.debug(s"Body: ${response.body}")
-        messagePostService.postMessage(OutMessage(
-          s"""
-             |*Order was created successfully!*
-             |
-                 | • Name: ${conf.fishShopName}
-             | • Phone: ${conf.fishShopPhone}
-             | • Email: ${conf.fishShopEmail}
-             | _Enjoy your meal!_
-                  """.stripMargin), inCommand.response_url)
-      case Failure(t) =>
-        val msg = s"Creating order failed for some reason (${t.getMessage})"
-        Logger.error(msg, t)
-        messagePostService.postMessage(OutMessage(msg), inCommand.response_url)
+
+        messagePostService.postOrderCreated(inCommand.response_url)
+      case Failure(t) => handleError(t, "Completing order failed", inCommand.response_url)
     }
   }
 
+  private def handleError(t: Throwable, msg: String, url: String): Unit = {
+    val attachmentMsg = s"$msg - ${t.getMessage}"
+    messagePostService.postMessage(OutMessage.create(Attachment("Error!", attachmentMsg, s"Error!: $attachmentMsg", "danger")), url)
+    Logger.error(msg, t)
+  }
 
   def fetchMenu(inCommand: InCommand): Unit = {
     val request: WSRequest = ws.url(configProvider.config.fishShopMenuUrl)
 
     request.get.onComplete {
       case Success(response) => handleResponse(response.body, inCommand.response_url)
-      case Failure(t) =>
-        val msg = "Unable to download current menu"
-        messagePostService.postMessage(OutMessage(s"Unable to download current menu ${t.getMessage}"), inCommand.response_url)
-        Logger.error(msg, t)
+      case Failure(t) => handleError(t, "Unable to download current menu", inCommand.response_url)
     }
   }
 
@@ -86,10 +78,8 @@ class FishShopClient @Inject()(ws: WSClient, messagePostService: MessagePostServ
     } mkString "\n"
 
 
-    messagePostService.postMessage(OutMessage(
-      s"""*Menu fetch result:*
-         |$res
-      """.stripMargin
+    messagePostService.postMessage(OutMessage.create(
+      Attachment("Daily fish shop menu", res, "Daily fish menu cannot be displayed at the moment")
     ), responseUrl)
   }
 

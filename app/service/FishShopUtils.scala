@@ -17,7 +17,7 @@ object FishShopUtils {
     */
   def formatOrderItems(orderedItems: Seq[Int]): String =
     countOccurrence(orderedItems).toList
-        .sortWith((t1, t2) => t1._2 > t2._2)
-        .map { case (keyItem, valCount) => s"$keyItem ${if (valCount > 1) s"(x$valCount)" else ""}" }
+      .sortWith((t1, t2) => t1._1 < t2._1)
+      .map { case (keyItem, valCount) => s"$keyItem${if (valCount > 1) s"(x$valCount)" else ""}" }
         .mkString(", ")
 }
