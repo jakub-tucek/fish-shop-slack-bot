@@ -1,6 +1,7 @@
 package domain
 
 /**
+  * Represents parsed processing of incoming command
   *
   * @author Jakub Tucek
   */

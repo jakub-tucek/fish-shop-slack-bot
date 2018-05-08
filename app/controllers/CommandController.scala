@@ -15,7 +15,7 @@ class CommandController @Inject()(cc: ControllerComponents, commandService: Comm
       commandService.handleCommand(cmd) match {
         case SuccessOutCommand() => Created
         case ErrorOutCommand(msg) =>
-          messagePostService.postMessage(OutMessage.create(Attachment("Error!", msg, s"Error!: $msg :sweat:", "danger")), cmd.response_url)
+          messagePostService.postMessage(OutMessage.create(Attachment("Error!", msg, s"Error!: $msg :sweat:", "danger")), cmd.responseUrl)
           NoContent
       }
   }

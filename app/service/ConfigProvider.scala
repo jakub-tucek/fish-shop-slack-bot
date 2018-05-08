@@ -6,6 +6,7 @@ import javax.inject.Singleton
 import play.api.Configuration
 
 /**
+  * Provider of custom config instance.
   *
   * @author Jakub Tucek
   */
@@ -13,6 +14,7 @@ import play.api.Configuration
 class ConfigProvider @Inject()(configuration: Configuration) {
 
 
+  // Parses configuration properties and returns them as FishShopConfig type
   lazy val config: FishShopConfig = FishShopConfig(
     configuration.get[String]("verificationToken"),
     configuration.get[String]("fishShopMenuUrl"),

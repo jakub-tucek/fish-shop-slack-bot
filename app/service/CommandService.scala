@@ -6,6 +6,7 @@ import javax.inject.Singleton
 import play.api.Logger
 
 /**
+  * CommandService provides base handling of incoming command. Calls other needed logic based on it's type.
   *
   * @author Jakub Tucek
   */
@@ -13,7 +14,12 @@ import play.api.Logger
 class CommandService @Inject()(messagePostService: MessagePostService, fishShopClient: FishShopClient, configProvider: ConfigProvider) {
   var state: OrderState = OrderState.empty
 
-
+  /**
+    * Verifies token in command and calls proper logic handler based on command type
+    *
+    * @param command command
+    * @return result of command handling
+    */
   def handleCommand(command: InCommand): OutCommand = {
     if (!command.token.equals(configProvider.config.verificationToken)) {
       val msg = "Unauthorized token in received command"
@@ -32,8 +38,8 @@ class CommandService @Inject()(messagePostService: MessagePostService, fishShopC
     }
   }
 
-  def handleStatusCommand(command: InCommand): OutCommand = {
-    messagePostService.postCurrentState(state, command.response_url)
+  private def handleStatusCommand(command: InCommand): OutCommand = {
+    messagePostService.postCurrentState(state, command.responseUrl)
     SuccessOutCommand()
   }
 
@@ -52,8 +58,8 @@ class CommandService @Inject()(messagePostService: MessagePostService, fishShopC
   }
 
   private def handleResetOrder(command: InCommand): OutCommand = {
-    state = OrderState(state.map filterKeys (_ != command.user_name))
-    messagePostService.postCurrentState(state, command.response_url)
+    state = OrderState(state.map filterKeys (_ != command.userName))
+    messagePostService.postCurrentState(state, command.responseUrl)
     SuccessOutCommand()
   }
 
@@ -73,10 +79,10 @@ class CommandService @Inject()(messagePostService: MessagePostService, fishShopC
         Logger.error(msg)
         ErrorOutCommand(msg)
       } else {
-        val joinedUserState = state.map.getOrElse(command.user_name, Seq.empty) ++ argsNumbers
-        state = OrderState(state.map + (command.user_name -> joinedUserState))
+        val joinedUserState = state.map.getOrElse(command.userName, Seq.empty) ++ argsNumbers
+        state = OrderState(state.map + (command.userName -> joinedUserState))
 
-        messagePostService.postCurrentState(state, command.response_url)
+        messagePostService.postCurrentState(state, command.responseUrl)
         SuccessOutCommand()
       }
     } catch {

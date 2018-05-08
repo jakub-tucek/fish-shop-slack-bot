@@ -1,6 +1,7 @@
 package domain
 
 /**
+  * Case class storing read configuration properties.
   *
   * @author Jakub Tucek
   */

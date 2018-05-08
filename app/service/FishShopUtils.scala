@@ -8,7 +8,15 @@ package service
 object FishShopUtils {
 
 
+  /**
+    * Counts occurrences of items in sequence
+    *
+    * @param items items to count
+    * @tparam T type of item
+    * @return map where key is item from given sequence and value is it's occurrences
+    */
   def countOccurrence[T](items: Seq[T]): Map[T, Int] = items.groupBy(identity).mapValues(_.size)
+
   /**
     * Formats seq of ordered items to string.
     *

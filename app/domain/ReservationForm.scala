@@ -1,20 +1,28 @@
 package domain
 
+import service.FishShopUtils
+
 import scala.collection.mutable
-import scala.collection.mutable.LinkedHashMap
 
 /**
+  * Class representing fish shop reservation form.
   *
   * @author Jakub Tucek
   */
 class ReservationForm(val name: String,
                       val email: String,
                       val phone: String,
-                      mealCounts: Map[Int, Int],
+                      mealCounts: Map[Int, Int], // maps meal id with required quantity
                       val note: String = ""
                      ) {
 
 
+  /**
+    * Converts internal object properties to linked hash map. Returned as map
+    * which keeps given key order.
+    *
+    * @return linked hash map where key corresponds with it's input name + value
+    */
   def getFormData: mutable.LinkedHashMap[String, String] = mutable.LinkedHashMap(
     "jmeno" -> name,
     "emailadresa" -> email,
@@ -44,7 +52,7 @@ class ReservationForm(val name: String,
 
 object ReservationForm {
   def apply(name: String, email: String, phone: String, state: OrderState): ReservationForm = {
-    val mealCounts: Map[Int, Int] = state.map.values.toArray.flatten.groupBy(identity).mapValues(_.length)
+    val mealCounts: Map[Int, Int] = FishShopUtils.countOccurrence(state.map.values.toArray.flatten)
 
     new ReservationForm(
       name,

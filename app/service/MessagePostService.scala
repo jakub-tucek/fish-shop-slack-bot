@@ -12,12 +12,18 @@ import scala.util.{Failure, Success}
 
 
 /**
+  * MessagePostService is responsible for posting message to slack channels.
   *
   * @author Jakub Tucek
   */
 @Singleton
 class MessagePostService @Inject()(ws: WSClient, configProvider: ConfigProvider, implicit val ec: ExecutionContext) {
 
+  /**
+    * Posts message about completed order.
+    *
+    * @param url url where to send message
+    */
   def postOrderCreated(url: String): Unit = {
     val conf = configProvider.config
     val status =
@@ -32,7 +38,12 @@ class MessagePostService @Inject()(ws: WSClient, configProvider: ConfigProvider,
     )
   }
 
-
+  /**
+    * Posts current state to given channel.
+    *
+    * @param state current state
+    * @param url   url where to send message
+    */
   def postCurrentState(state: OrderState, url: String): Unit = {
     val attachments = if (state.map.nonEmpty) {
       state.map.map {
@@ -54,7 +65,12 @@ class MessagePostService @Inject()(ws: WSClient, configProvider: ConfigProvider,
     postMessage(OutMessage("*Fish shop orders*", attachments), url)
   }
 
-
+  /**
+    * Posts given message to slack channel.
+    *
+    * @param outMessage out message type
+    * @param url        channel url
+    */
   def postMessage(outMessage: OutMessage, url: String): Unit = {
     val request: WSRequest = ws.url(url)
     val complexRequest: WSRequest =

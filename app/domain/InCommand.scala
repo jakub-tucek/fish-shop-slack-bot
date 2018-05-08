@@ -4,33 +4,33 @@ import service.CommandHelper
 
 
 /**
+  * Incoming slack command representation
   *
   * @author Jakub Tucek
   */
 case class InCommand(token: String,
-                     team_id: String,
-                     team_domain: String,
-                     enterprise_id: String,
-                     enterprise_name: String,
-                     channel_id: String,
-                     channel_name: String,
-                     user_id: String,
-                     user_name: String,
+                     teamId: String,
+                     teamDomain: String,
+                     enterpriseId: String,
+                     enterpriseName: String,
+                     channelId: String,
+                     channelName: String,
+                     userId: String,
+                     userName: String,
                      command: CommandType,
                      text: Seq[String],
-                     response_url: String,
-                     trigger_id: String)
+                     responseUrl: String,
+                     triggerId: String)
 
 
 object InCommand {
 
-
-  val fishOrderCmd = "/fish-order"
-  val fishMenuCmd = "/fish-menu"
-  val fishResetCmd = "/fish-reset"
-  val fishCompleteCmd = "/fish-complete"
-  val fishStatusCmd = "/fish-status"
-
+  /**
+    * Creates and parses map to InCommand type
+    *
+    * @param map accepted map from request
+    * @return InCommand type
+    */
   def createFromMap(map: Map[String, Seq[String]]): InCommand = InCommand(
     CommandHelper getHead(map, "token"),
     CommandHelper getHead(map, "team_id"),
@@ -42,11 +42,11 @@ object InCommand {
     CommandHelper getHead(map, "user_id"),
     CommandHelper getHead(map, "user_name"),
     CommandHelper getHead(map, "command") match {
-      case InCommand.fishOrderCmd => OrderCommand()
-      case InCommand.fishMenuCmd => MenuCommand()
-      case InCommand.fishResetCmd => ResetOrderCommand()
-      case InCommand.fishCompleteCmd => CompleteOrderCommand()
-      case InCommand.fishStatusCmd => StatusCommand()
+      case CommandType.fishOrderCmd => OrderCommand()
+      case CommandType.fishMenuCmd => MenuCommand()
+      case CommandType.fishResetCmd => ResetOrderCommand()
+      case CommandType.fishCompleteCmd => CompleteOrderCommand()
+      case CommandType.fishStatusCmd => StatusCommand()
       case _ => UnknownCommand()
     },
     CommandHelper.getHead(map, "text")
