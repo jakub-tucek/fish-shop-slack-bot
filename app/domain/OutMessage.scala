@@ -14,7 +14,7 @@ object OutMessage {
   implicit val outMessageWrites: Writes[OutMessage] = new Writes[OutMessage] {
     def writes(outMessage: OutMessage): JsObject = Json.obj(
       "text" -> outMessage.text,
-      "response_type": "in_channel",
+      "response_type" -> "in_channel",
       "attachments" -> outMessage.attachments.map(a => Attachment.attachmentWrites.writes(a))
     )
   }
