@@ -17,6 +17,7 @@ object FishShopUtils {
     */
   def countOccurrence[T](items: Seq[T]): Map[T, Int] = items.groupBy(identity).mapValues(_.size)
 
+
   /**
     * Formats seq of ordered items to string.
     *
@@ -26,6 +27,17 @@ object FishShopUtils {
   def formatOrderItems(orderedItems: Seq[Int]): String =
     countOccurrence(orderedItems).toList
       .sortWith((t1, t2) => t1._1 < t2._1)
-      .map { case (keyItem, valCount) => s"$keyItem${if (valCount > 1) s"(x$valCount)" else ""}" }
-        .mkString(", ")
+      .map { case (keyItem, valCount) => s"$keyItem (${getEmojiRepeated(keyItem, valCount)})" }
+      .mkString(", ")
+
+  private def getEmojiRepeated(keyItem: Int, valCount: Int): String =
+    (1 to valCount).map { _ => getEmoji(keyItem) }.mkString("")
+
+  private def getEmoji(value: Int): String = value match {
+    case 0 => ":ramen:"
+    case 1 | 2 => ":fish:"
+    case 3 | 4 => ":curry:"
+    case 5 => ":green_salad:"
+    case _ => ""
+  }
 }
