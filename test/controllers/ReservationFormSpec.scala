@@ -29,18 +29,7 @@ class ReservationFormSpec extends FlatSpec with Matchers {
     mappedForm should contain("c1[]" -> "ano")
     mappedForm should contain("c1-ks" -> "1")
 
-    mappedForm should contain("c2[]" -> "")
-    mappedForm should contain("c2-ks" -> "")
-
-    mappedForm should contain("c3[]" -> "")
-    mappedForm should contain("c3-ks" -> "")
-
-    mappedForm should contain("c4[]" -> "")
-    mappedForm should contain("c4-ks" -> "")
-
     mappedForm should contain("c5[]" -> "ano")
     mappedForm should contain("c5-ks" -> "2")
-
-    mappedForm should contain("poznamka" -> "")
   }
 }
