@@ -40,7 +40,7 @@ class ReservationForm(val name: String,
     getBoolEntry(mealCounts.getOrElse(5, 0), "c5[]"),
     getMealCountEntry(mealCounts.getOrElse(5, 0), "c5-ks"),
     "poznamka" -> note
-  )
+  ).filter { case (key, value) => value != "" }
 
   private def getBoolEntry(value: Int, keyName: String) = keyName -> (if (value > 0) "ano" else "")
 

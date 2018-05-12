@@ -99,9 +99,11 @@ class FishShopClient @Inject()(ws: WSClient, messagePostService: MessagePostServ
 
     val res = elems filter (_.text.nonEmpty) map {
       e => {
-        if (e.toString.contains("li")) {
+        if (e.toString.contains("<li>")) {
           dirtyCounter += 1
           s" *$dirtyCounter.* ${e.text}"
+        } else if (e.toString.contains("polevka")) {
+          s":ramen: ${e.text}"
         } else {
           dirtyCounter = 0
           e.text
