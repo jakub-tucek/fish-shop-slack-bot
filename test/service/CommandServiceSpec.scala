@@ -46,7 +46,7 @@ class CommandServiceSpec extends FlatSpec
 
   "Reset command" should "Reset user's order" in {
     commandService.state = OrderState(Map(
-      "jt" -> Seq(1, 2)
+      "jt" -> Seq(FirstMealType, SecondMealType)
     ))
 
     val cmd = InCommand.createFromMap(Map(
@@ -121,7 +121,7 @@ class CommandServiceSpec extends FlatSpec
     val res = commandService.handleCommand(cmd)
     res shouldBe SuccessOutCommand()
 
-    commandService.state shouldBe OrderState(Map("jt" -> Seq(1, 2)))
+    commandService.state shouldBe OrderState(Map("jt" -> Seq(FirstMealType, SecondMealType)))
   }
 
   "Order command" should "modify state without duplicated values" in {
@@ -135,7 +135,7 @@ class CommandServiceSpec extends FlatSpec
     val res = commandService.handleCommand(cmd)
     res shouldBe SuccessOutCommand()
 
-    commandService.state shouldBe OrderState(Map("jt" -> Seq(1, 2)))
+    commandService.state shouldBe OrderState(Map("jt" -> Seq(FirstMealType, SecondMealType)))
   }
 
   "Order command" should "call post service with new state" in {
@@ -179,7 +179,7 @@ class CommandServiceSpec extends FlatSpec
   "Complete order command" should "call client and reset state" in {
     val cmd = InCommand.createFromMap(Map(tokenEntry, messageUrl, "command" -> Seq(CommandType.fishCompleteCmd)))
 
-    val currState = OrderState(Map("jt" -> Seq(1, 2)))
+    val currState = OrderState(Map("jt" -> Seq(FirstMealType, SecondMealType)))
     commandService.state = currState
     val res = commandService.handleCommand(cmd)
 
