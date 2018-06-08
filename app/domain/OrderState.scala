@@ -6,11 +6,11 @@ package domain
   *
   * @author Jakub Tucek
   */
-case class OrderState(map: Map[String, Seq[Int]])
+case class OrderState(map: Map[String, Seq[MealType]])
 
 
 object OrderState {
 
   // empty state
-  def empty: OrderState = OrderState(Map.empty[String, Seq[Int]])
+  def empty: OrderState = OrderState(Map.empty[String, Seq[MealType]])
 }

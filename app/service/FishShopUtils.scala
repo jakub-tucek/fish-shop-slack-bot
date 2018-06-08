@@ -1,5 +1,7 @@
 package service
 
+import domain.MealType
+
 /**
   * Helper function for usage in templates.
   *
@@ -19,25 +21,17 @@ object FishShopUtils {
 
 
   /**
-    * Formats seq of ordered items to string.
+    * Formats seq of ordered meals to string.
     *
     * @param orderedItems seq of ordered meals
     * @return formatted items as text
     */
-  def formatOrderItems(orderedItems: Seq[Int]): String =
+  def formatOrderItems(orderedItems: Seq[MealType]): String =
     countOccurrence(orderedItems).toList
-      .sortWith((t1, t2) => t1._1 < t2._1)
-      .map { case (keyItem, valCount) => s"$keyItem (${getEmojiRepeated(keyItem, valCount)})" }
+      .sortWith((t1, t2) => t1._1.mealId < t2._1.mealId)
+      .map { case (mealType, valCount) => s"${mealType.mealId}(${getEmojiRepeated(mealType.emoji, valCount)})" }
       .mkString(", ")
 
-  private def getEmojiRepeated(keyItem: Int, valCount: Int): String =
-    (1 to valCount).map { _ => getEmoji(keyItem) }.mkString("")
-
-  private def getEmoji(value: Int): String = value match {
-    case 0 => ":ramen:"
-    case 1 | 2 => ":fish:"
-    case 3 | 4 => ":curry:"
-    case 5 => ":green_salad:"
-    case _ => ""
-  }
+  private def getEmojiRepeated(emoji: String, valCount: Int): String =
+    (1 to valCount).map { _ => emoji }.mkString("")
 }
