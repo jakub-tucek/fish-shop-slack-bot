@@ -1,6 +1,6 @@
 package controllers
 
-import domain.ReservationForm
+import domain.{FifthMealType, FirstMealType, ReservationForm, SoupMealType}
 import org.scalatest.{FlatSpec, Matchers}
 
 /**
@@ -14,7 +14,7 @@ class ReservationFormSpec extends FlatSpec with Matchers {
       "name",
       "mail",
       "phone",
-      Map(0 -> 1, 5 -> 2, 1 -> 1)
+      Map(SoupMealType -> 1, FifthMealType -> 2, FirstMealType -> 1)
     )
 
     val mappedForm = form.getFormData
