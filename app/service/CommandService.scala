@@ -58,7 +58,15 @@ class CommandService @Inject()(messagePostService: MessagePostService, fishShopC
   }
 
   private def handleResetOrder(command: InCommand): OutCommand = {
-    state = OrderState(state.map filterKeys (_ != command.userName))
+    if (command.text.isEmpty) {
+        state = OrderState(state.map filterKeys (_ != command.userName))
+    } else if (command.text.head == "all") {
+        state = OrderState.empty
+    } else {
+      val msg = "Unknown reset command. Only one allowed is 'all'"
+      Logger.error(msg)
+      return ErrorOutCommand(msg)
+    }
     messagePostService.postCurrentState(state, command.responseUrl)
     SuccessOutCommand()
   }
