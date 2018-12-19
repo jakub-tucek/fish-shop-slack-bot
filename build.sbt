@@ -1,7 +1,7 @@
 name := """fish-shop-slack-bot"""
 organization := "cz.jt"
 
-version := "1.0.6-SNAPSHOT"
+version := "1.0.7-SNAPSHOT"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
